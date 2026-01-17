@@ -6,6 +6,9 @@ target/
 *.ear
 *.log
 
+.metadata/
+
+
 # ===== Maven =====
 .mvn/wrapper/maven-wrapper.jar
 
