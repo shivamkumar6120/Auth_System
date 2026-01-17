@@ -7,6 +7,12 @@ target/
 *.log
 
 .metadata/
+.idea/
+.vscode/
+*.iml
+.classpath
+.project
+.settings/
 
 
 # ===== Maven =====
