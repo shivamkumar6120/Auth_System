@@ -1,5 +1,8 @@
 package com.substring.auth.auth_app_backend.services;
 
+import java.util.List;
+import java.util.stream.StreamSupport;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
@@ -8,11 +11,13 @@ import com.substring.auth.auth_app_backend.entities.Provider;
 import com.substring.auth.auth_app_backend.entities.User;
 import com.substring.auth.auth_app_backend.repositories.UserRepository;
 
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
 @Service
 //@Transactional
 @RequiredArgsConstructor
+//@AllArgsConstructor
 public class UserServicesImpl implements UserServices {
 
 	private final UserRepository userRepository;
@@ -65,9 +70,10 @@ public class UserServicesImpl implements UserServices {
 	}
 
 	@Override
-	public Iterable<UserDto> getAllUsers() {
-		// TODO Auto-generated method stub
-		return null;
+	public List<UserDto> getAllUsers() {
+	    return StreamSupport.stream(userRepository.findAll().spliterator(), false)
+	            .map(user -> modelMapper.map(user, UserDto.class))
+	            .toList();		
 	}
 
 }
