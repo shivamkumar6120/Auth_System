@@ -1,13 +1,43 @@
 package com.substring.auth.auth_app_backend.services;
 
-import com.substring.auth.auth_app_backend.dtos.UserDto;
+import org.modelmapper.ModelMapper;
+import org.springframework.stereotype.Service;
 
-public class UserServicesImpl implements UserServices{
+import com.substring.auth.auth_app_backend.dtos.UserDto;
+import com.substring.auth.auth_app_backend.entities.Provider;
+import com.substring.auth.auth_app_backend.entities.User;
+import com.substring.auth.auth_app_backend.repositories.UserRepository;
+
+import lombok.RequiredArgsConstructor;
+
+@Service
+//@Transactional
+@RequiredArgsConstructor
+public class UserServicesImpl implements UserServices {
+
+	private final UserRepository userRepository;
+	private final ModelMapper modelMapper;
 
 	@Override
 	public UserDto createUser(UserDto userDto) {
-		// TODO Auto-generated method stub
-		return null;
+
+		if (userDto.getEmail() == null || userDto.getEmail().isBlank())
+			throw new IllegalArgumentException("Email not found");
+		if (userRepository.existsByEmail(userDto.getEmail()))
+			throw new IllegalArgumentException("Email already exists");
+//		can add some more checks
+
+		User user = modelMapper.map(userDto, User.class);
+		user.setProvider(userDto.getProvider() != null ? userDto.getProvider() : Provider.LOCAL);
+//		role assign to new User
+		
+//		TODO
+		
+		User savedUser = userRepository.save(user);
+
+		UserDto finalDto = modelMapper.map(savedUser, UserDto.class);
+
+		return finalDto;
 	}
 
 	@Override
@@ -25,7 +55,7 @@ public class UserServicesImpl implements UserServices{
 	@Override
 	public void deleteUser(String userId) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
