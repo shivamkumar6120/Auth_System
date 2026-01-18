@@ -9,15 +9,15 @@ import org.springframework.stereotype.Service;
 import com.substring.auth.auth_app_backend.dtos.UserDto;
 import com.substring.auth.auth_app_backend.entities.Provider;
 import com.substring.auth.auth_app_backend.entities.User;
+import com.substring.auth.auth_app_backend.exceptions.ResourceNotFoundException;
 import com.substring.auth.auth_app_backend.repositories.UserRepository;
 
-import lombok.AllArgsConstructor;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
-//@Transactional
+@Transactional
 @RequiredArgsConstructor
-//@AllArgsConstructor
 public class UserServicesImpl implements UserServices {
 
 	private final UserRepository userRepository;
@@ -35,9 +35,9 @@ public class UserServicesImpl implements UserServices {
 		User user = modelMapper.map(userDto, User.class);
 		user.setProvider(userDto.getProvider() != null ? userDto.getProvider() : Provider.LOCAL);
 //		role assign to new User
-		
+
 //		TODO
-		
+
 		User savedUser = userRepository.save(user);
 
 		UserDto finalDto = modelMapper.map(savedUser, UserDto.class);
@@ -47,8 +47,11 @@ public class UserServicesImpl implements UserServices {
 
 	@Override
 	public UserDto getUserByEamil(String email) {
-		// TODO Auto-generated method stub
-		return null;
+
+		User user = userRepository.findByEmail(email)
+				.orElseThrow(() -> new ResourceNotFoundException("User not found with " + email + " ."));
+
+		return modelMapper.map(user, UserDto.class);
 	}
 
 	@Override
@@ -71,9 +74,8 @@ public class UserServicesImpl implements UserServices {
 
 	@Override
 	public List<UserDto> getAllUsers() {
-	    return StreamSupport.stream(userRepository.findAll().spliterator(), false)
-	            .map(user -> modelMapper.map(user, UserDto.class))
-	            .toList();		
+		return StreamSupport.stream(userRepository.findAll().spliterator(), false)
+				.map(user -> modelMapper.map(user, UserDto.class)).toList();
 	}
 
 }
