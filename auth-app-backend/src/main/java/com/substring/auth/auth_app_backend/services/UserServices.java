@@ -1,5 +1,7 @@
 package com.substring.auth.auth_app_backend.services;
 
+import java.util.List;
+
 import com.substring.auth.auth_app_backend.dtos.UserDto;
 
 public interface UserServices {
@@ -20,6 +22,6 @@ public interface UserServices {
 	UserDto getUserById(String uderId);
 	
 //	get all user
-	Iterable<UserDto> getAllUsers();
+	List<UserDto> getAllUsers();
 
 }
